@@ -2,87 +2,100 @@ package com.dogwalk.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.dogwalk.service.UtilService;
 import com.dogwalk.util.Constantes;
-import com.dogwalk.util.Util;
 
 @RestController
 @RequestMapping("/util")
 public class UtilController {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  @GetMapping("/encriptarConBase64/{textoPorEncriptar}")
-  public ResponseEntity<String> encriptarConBase64(
-      @PathVariable("textoPorEncriptar") String textoPorEncriptar) {
+	@Autowired
+	UtilService utilService;
 
-    String nombreMetodo = "encriptarConBase64";
-    logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_UTIL, nombreMetodo,
-        Constantes.LOG_METODO_INICIO);
+	@GetMapping("/encriptarConBase64/{textoPorEncriptar}")
+	public ResponseEntity<String> encriptarConBase64(@PathVariable("textoPorEncriptar") String textoPorEncriptar) {
 
-    HttpStatus status = HttpStatus.BAD_REQUEST;
-    String textoEncriptado = Util.encriptarConBase64(textoPorEncriptar);
+		String nombreMetodo = "encriptarConBase64";
+		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_UTIL, nombreMetodo, Constantes.LOG_METODO_INICIO);
 
-    if (textoEncriptado != null) {
-      status = HttpStatus.OK;
-    }
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		String textoEncriptado = utilService.encriptarConBase64(textoPorEncriptar);
 
-    ResponseEntity<String> responseEntity = new ResponseEntity<>(textoEncriptado, status);
+		if (textoEncriptado != null) {
+			status = HttpStatus.OK;
+			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_UTIL, nombreMetodo,
+					Constantes.LOG_METODO_ESTATUS_EXITOSO);
+		} else {
+			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_UTIL, nombreMetodo,
+					Constantes.LOG_METODO_ESTATUS_FALLIDO);
+		}
 
-    logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_UTIL, nombreMetodo,
-        Constantes.LOG_METODO_FIN);
+		ResponseEntity<String> responseEntity = new ResponseEntity<>(textoEncriptado, status);
 
-    return responseEntity;
-  }
+		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_UTIL, nombreMetodo, Constantes.LOG_METODO_FIN);
 
-  @GetMapping("/desencriptarConBase64/{textoPorDesencriptar}")
-  public ResponseEntity<String> desencriptarConBase64(
-      @PathVariable("textoPorDesencriptar") String textoPorDesencriptar) {
+		return responseEntity;
+	}
 
-    String nombreMetodo = "desencriptarConBase64";
-    logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_UTIL, nombreMetodo,
-        Constantes.LOG_METODO_INICIO);
+	@GetMapping("/desencriptarConBase64/{textoPorDesencriptar}")
+	public ResponseEntity<String> desencriptarConBase64(
+			@PathVariable("textoPorDesencriptar") String textoPorDesencriptar) {
 
-    HttpStatus status = HttpStatus.BAD_REQUEST;
-    String textoDesencriptado = Util.desencriptarConBase64(textoPorDesencriptar);
+		String nombreMetodo = "desencriptarConBase64";
+		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_UTIL, nombreMetodo, Constantes.LOG_METODO_INICIO);
 
-    if (textoDesencriptado != null) {
-      status = HttpStatus.OK;
-    }
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		String textoDesencriptado = utilService.desencriptarConBase64(textoPorDesencriptar);
 
-    ResponseEntity<String> responseEntity = new ResponseEntity<>(textoDesencriptado, status);
+		if (textoDesencriptado != null) {
+			status = HttpStatus.OK;
+			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_UTIL, nombreMetodo,
+					Constantes.LOG_METODO_ESTATUS_EXITOSO);
+		} else {
+			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_UTIL, nombreMetodo,
+					Constantes.LOG_METODO_ESTATUS_FALLIDO);
+		}
 
-    logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_UTIL, nombreMetodo,
-        Constantes.LOG_METODO_FIN);
+		ResponseEntity<String> responseEntity = new ResponseEntity<>(textoDesencriptado, status);
 
-    return responseEntity;
-  }
+		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_UTIL, nombreMetodo, Constantes.LOG_METODO_FIN);
 
-  @GetMapping("/generarContrasena")
-  public ResponseEntity<String> generarContrasena() {
+		return responseEntity;
+	}
 
-    String nombreMetodo = "generarContrasena";
-    logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_UTIL, nombreMetodo,
-        Constantes.LOG_METODO_INICIO);
+	@GetMapping("/generarContrasena")
+	public ResponseEntity<String> generarContrasena() {
 
-    HttpStatus status = HttpStatus.BAD_REQUEST;
-    String contrasenaAutogenerada = Util.generarPasswordTemporal();
+		String nombreMetodo = "generarContrasena";
+		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_UTIL, nombreMetodo, Constantes.LOG_METODO_INICIO);
 
-    if (contrasenaAutogenerada != null) {
-      status = HttpStatus.OK;
-    }
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		String contrasenaAutogenerada = utilService.generarContrasena(Constantes.LONGITUD_CONTRASENA);
 
-    ResponseEntity<String> responseEntity = new ResponseEntity<>(contrasenaAutogenerada, status);
+		if (contrasenaAutogenerada != null) {
+			status = HttpStatus.OK;
+			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_UTIL, nombreMetodo,
+					Constantes.LOG_METODO_ESTATUS_EXITOSO);
+		} else {
+			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_UTIL, nombreMetodo,
+					Constantes.LOG_METODO_ESTATUS_FALLIDO);
+		}
 
-    logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_UTIL, nombreMetodo,
-        Constantes.LOG_METODO_FIN);
+		ResponseEntity<String> responseEntity = new ResponseEntity<>(contrasenaAutogenerada, status);
 
-    return responseEntity;
-  }
+		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_UTIL, nombreMetodo, Constantes.LOG_METODO_FIN);
+
+		return responseEntity;
+	}
 
 }

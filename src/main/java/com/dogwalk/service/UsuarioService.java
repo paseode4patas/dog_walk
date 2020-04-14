@@ -12,181 +12,184 @@ import com.dogwalk.dto.UsuarioDto;
 import com.dogwalk.entity.UsuarioEntity;
 import com.dogwalk.repository.UsuarioRepository;
 import com.dogwalk.util.Constantes;
-import com.dogwalk.util.Util;
 
 @Service
 public class UsuarioService {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  @Autowired
-  UsuarioRepository usuarioRepository;
+	@Autowired
+	UsuarioRepository usuarioRepository;
 
-  @Autowired
-  CorreoService correoService;
+	@Autowired
+	UtilService utilService;
 
-  public UsuarioDto crearUsuario(UsuarioEntity usuarioEntity) {
+	@Autowired
+	CorreoService correoService;
 
-    String nombreMetodo = "crearUsuario";
-    logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo,
-        Constantes.LOG_METODO_INICIO);
+	public UsuarioDto crearUsuario(UsuarioEntity usuarioEntity) {
 
-    UsuarioDto usuarioDto = new UsuarioDto();
-    String contrasenaEncriptada = "";
-    String mensaje = Constantes.CREACION_USUARIO_FALLIDO;
+		String nombreMetodo = "crearUsuario";
+		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo, Constantes.LOG_METODO_INICIO);
 
-    contrasenaEncriptada = Util.encriptarConBase64(usuarioEntity.getContrasena().trim());
-    usuarioEntity.setContrasena(contrasenaEncriptada);
-    usuarioEntity.setCambiarContrasena(Constantes.DESACTIVADO);
+		UsuarioDto usuarioDto = new UsuarioDto();
+		String contrasenaEncriptada = "";
+		String mensaje = Constantes.CREACION_USUARIO_FALLIDO;
 
-    UsuarioEntity nuevoUsuario = usuarioRepository.save(usuarioEntity);
+		contrasenaEncriptada = utilService.encriptarConBase64(usuarioEntity.getContrasena().trim());
+		usuarioEntity.setContrasena(contrasenaEncriptada);
+		usuarioEntity.setCambiarContrasena(Constantes.DESACTIVADO);
 
-    if (nuevoUsuario != null && nuevoUsuario.getId() > 0) {
+		UsuarioEntity nuevoUsuario = usuarioRepository.save(usuarioEntity);
 
-      usuarioDto.setId(nuevoUsuario.getId());
-      usuarioDto.setNombreUsuario(nuevoUsuario.getNombreUsuario());
-      usuarioDto.setTipoUsuario(nuevoUsuario.getTipoUsuario());
-      usuarioDto.setCambiarContrasena(nuevoUsuario.isCambiarContrasena());
-      mensaje = Constantes.CREACION_USUARIO_EXITOSO;
+		if (nuevoUsuario != null && nuevoUsuario.getId() > 0) {
 
-    }
+			usuarioDto.setId(nuevoUsuario.getId());
+			usuarioDto.setNombreUsuario(nuevoUsuario.getNombreUsuario());
+			usuarioDto.setTipoUsuario(nuevoUsuario.getTipoUsuario());
+			usuarioDto.setCambiarContrasena(nuevoUsuario.isCambiarContrasena());
+			mensaje = Constantes.CREACION_USUARIO_EXITOSO;
 
-    usuarioDto.setMensaje(mensaje);
+			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo, mensaje);
 
-    logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo,
-        Constantes.LOG_METODO_FIN);
+		} else {
+			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo, mensaje);
+		}
 
-    return usuarioDto;
-  }
+		usuarioDto.setMensaje(mensaje);
 
-  public UsuarioDto login(String usuario, String contrasena) {
+		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo, Constantes.LOG_METODO_FIN);
 
-    String nombreMetodo = "login";
-    logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo,
-        Constantes.LOG_METODO_INICIO);
+		return usuarioDto;
+	}
 
-    UsuarioDto loginDto = new UsuarioDto();
-    String contrasenaEncriptada = "";
-    String mensaje = Constantes.LOGIN_FALLIDO;
-    boolean datosValidos = Stream.of(usuario, contrasena).allMatch(Objects::nonNull);
+	public UsuarioDto login(String usuario, String contrasena) {
 
-    if (datosValidos) {
+		String nombreMetodo = "login";
+		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo, Constantes.LOG_METODO_INICIO);
 
-      usuario = usuario.toUpperCase().trim();
-      contrasena = contrasena.trim();
-      contrasenaEncriptada = Util.encriptarConBase64(contrasena);
+		UsuarioDto loginDto = new UsuarioDto();
+		String contrasenaEncriptada = "";
+		String mensaje = Constantes.LOGIN_FALLIDO;
+		boolean datosValidos = Stream.of(usuario, contrasena).allMatch(Objects::nonNull);
 
-      UsuarioEntity usuarioEntity =
-          usuarioRepository.findByNombreUsuarioAndContrasena(usuario, contrasenaEncriptada);
+		if (datosValidos) {
 
-      if (usuarioEntity != null && usuarioEntity.getId() > 0) {
+			usuario = usuario.toUpperCase().trim();
+			contrasena = contrasena.trim();
+			contrasenaEncriptada = utilService.encriptarConBase64(contrasena);
 
-        loginDto.setId(usuarioEntity.getId());
-        loginDto.setNombreUsuario(usuarioEntity.getNombreUsuario());
-        loginDto.setTipoUsuario(usuarioEntity.getTipoUsuario());
-        loginDto.setCambiarContrasena(usuarioEntity.isCambiarContrasena());
-        mensaje = Constantes.LOGIN_EXITOSO;
+			UsuarioEntity usuarioEntity = usuarioRepository.findByNombreUsuarioAndContrasena(usuario,
+					contrasenaEncriptada);
 
-      }
+			if (usuarioEntity != null && usuarioEntity.getId() > 0) {
 
-    }
+				loginDto.setId(usuarioEntity.getId());
+				loginDto.setNombreUsuario(usuarioEntity.getNombreUsuario());
+				loginDto.setTipoUsuario(usuarioEntity.getTipoUsuario());
+				loginDto.setCambiarContrasena(usuarioEntity.isCambiarContrasena());
+				mensaje = Constantes.LOGIN_EXITOSO;
 
-    loginDto.setMensaje(mensaje);
+				logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo, mensaje);
 
-    logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo,
-        Constantes.LOG_METODO_FIN);
+			} else {
+				logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo, mensaje);
+			}
 
-    return loginDto;
-  }
+		}
 
-  public MensajeDto cambiarContrasena(Integer idUsuario, String contrasenaActual,
-      String contrasenaNueva) {
+		loginDto.setMensaje(mensaje);
 
-    String nombreMetodo = "cambiarContrasena";
-    logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo,
-        Constantes.LOG_METODO_INICIO);
+		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo, Constantes.LOG_METODO_FIN);
 
-    String contrasenaActualEncriptada = "";
-    String contrasenaEncriptada = "";
-    MensajeDto mensajeDto = new MensajeDto();
-    String mensaje = "";
-    boolean datosValidos =
-        Stream.of(idUsuario, contrasenaActual, contrasenaNueva).allMatch(Objects::nonNull);
+		return loginDto;
+	}
 
-    if (datosValidos) {
+	public MensajeDto cambiarContrasena(Integer idUsuario, String contrasenaActual, String contrasenaNueva) {
 
-      UsuarioEntity usuarioEntity = usuarioRepository.findUsuarioById(idUsuario);
+		String nombreMetodo = "cambiarContrasena";
+		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo, Constantes.LOG_METODO_INICIO);
 
-      if (usuarioEntity != null && usuarioEntity.getId() > 0) {
+		String contrasenaActualEncriptada = "";
+		String contrasenaEncriptada = "";
+		MensajeDto mensajeDto = new MensajeDto();
+		String mensaje = Constantes.CAMBIO_CONTRASENA_FALLIDO;
+		boolean datosValidos = Stream.of(idUsuario, contrasenaActual, contrasenaNueva).allMatch(Objects::nonNull);
 
-        contrasenaActualEncriptada = Util.encriptarConBase64(contrasenaActual.trim());
+		if (datosValidos) {
 
-        if (usuarioEntity.getContrasena().equals(contrasenaActualEncriptada)) {
+			UsuarioEntity usuarioEntity = usuarioRepository.findUsuarioById(idUsuario);
 
-          contrasenaEncriptada = Util.encriptarConBase64(contrasenaNueva.trim());
-          usuarioEntity.setContrasena(contrasenaEncriptada);
-          usuarioEntity.setCambiarContrasena(Constantes.DESACTIVADO);
-          usuarioRepository.save(usuarioEntity);
+			if (usuarioEntity != null && usuarioEntity.getId() > 0) {
 
-          mensaje = Constantes.CAMBIO_CONTRASENA_EXITOSO;
+				contrasenaActualEncriptada = utilService.encriptarConBase64(contrasenaActual.trim());
 
-        } else {
-          mensaje = Constantes.CAMBIO_CONTRASENA_FALLIDO;
-        }
+				if (usuarioEntity.getContrasena().equals(contrasenaActualEncriptada)) {
 
-      }
+					contrasenaEncriptada = utilService.encriptarConBase64(contrasenaNueva.trim());
+					usuarioEntity.setContrasena(contrasenaEncriptada);
+					usuarioEntity.setCambiarContrasena(Constantes.DESACTIVADO);
+					usuarioRepository.save(usuarioEntity);
 
-    }
+					mensaje = Constantes.CAMBIO_CONTRASENA_EXITOSO;
 
-    mensajeDto.setMensaje(mensaje);
+					logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo, mensaje);
 
-    logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo,
-        Constantes.LOG_METODO_FIN);
+				} else {
+					logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo, mensaje);
+				}
 
-    return mensajeDto;
-  }
+			}
 
-  public MensajeDto recuperarContrasena(String correo) {
+		}
 
-    String nombreMetodo = "recuperarContrasena";
-    logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo,
-        Constantes.LOG_METODO_INICIO);
+		mensajeDto.setMensaje(mensaje);
 
-    String contrasenaAutogenerada = "";
-    String contrasenaEncriptada = "";
-    String mensaje = Constantes.ENVIO_CONTRASENA_FALLIDO;
+		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo, Constantes.LOG_METODO_FIN);
 
-    boolean envioCorrecto = false;
+		return mensajeDto;
+	}
 
-    MensajeDto mensajeDto = new MensajeDto();
+	public MensajeDto recuperarContrasena(String correo) {
 
-    UsuarioEntity usuarioEntity = usuarioRepository.findByNombreUsuario(correo);
+		String nombreMetodo = "recuperarContrasena";
+		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo, Constantes.LOG_METODO_INICIO);
 
-    if (usuarioEntity != null && usuarioEntity.getId() > 0) {
+		String contrasenaAutogenerada = "";
+		String contrasenaEncriptada = "";
+		String mensaje = Constantes.ENVIO_CONTRASENA_FALLIDO;
 
-      contrasenaAutogenerada = Util.generarPasswordTemporal();
-      contrasenaEncriptada = Util.encriptarConBase64(contrasenaAutogenerada);
+		boolean envioCorrecto = false;
 
-      usuarioEntity.setContrasena(contrasenaEncriptada);
-      usuarioEntity.setCambiarContrasena(Constantes.ACTIVADO);
+		MensajeDto mensajeDto = new MensajeDto();
 
-      envioCorrecto = correoService.enviarCorreo(correo, contrasenaAutogenerada);
+		UsuarioEntity usuarioEntity = usuarioRepository.findByNombreUsuario(correo);
 
-      if (envioCorrecto) {
+		if (usuarioEntity != null && usuarioEntity.getId() > 0) {
 
-        usuarioRepository.save(usuarioEntity);
-        mensaje = Constantes.ENVIO_CONTRASENA_EXITOSO;
+			contrasenaAutogenerada = utilService.generarContrasena(Constantes.LONGITUD_CONTRASENA);
+			contrasenaEncriptada = utilService.encriptarConBase64(contrasenaAutogenerada);
 
-      }
+			usuarioEntity.setContrasena(contrasenaEncriptada);
+			usuarioEntity.setCambiarContrasena(Constantes.ACTIVADO);
 
-    }
+			envioCorrecto = correoService.enviarCorreo(correo, contrasenaAutogenerada);
 
-    mensajeDto.setMensaje(mensaje);
+			if (envioCorrecto) {
+				usuarioRepository.save(usuarioEntity);
+				mensaje = Constantes.ENVIO_CONTRASENA_EXITOSO;
+				logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo, mensaje);
+			} else {
+				logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo, mensaje);
+			}
 
-    logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo,
-        Constantes.LOG_METODO_FIN);
+		}
 
-    return mensajeDto;
-  }
+		mensajeDto.setMensaje(mensaje);
+
+		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo, Constantes.LOG_METODO_FIN);
+
+		return mensajeDto;
+	}
 
 }

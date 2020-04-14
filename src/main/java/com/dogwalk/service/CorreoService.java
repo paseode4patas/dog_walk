@@ -15,47 +15,50 @@ import com.dogwalk.util.Constantes;
 @Service
 public class CorreoService {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  @Autowired
-  private JavaMailSender mailSender;
+	@Autowired
+	private JavaMailSender mailSender;
 
-  public boolean enviarCorreo(String correo, String contrasenaAutoGenerada) {
+	public boolean enviarCorreo(String correo, String contrasenaAutoGenerada) {
 
-    String nombreMetodo = "enviarCorreo";
-    logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_CORREO, nombreMetodo,
-        Constantes.LOG_METODO_INICIO);
+		String nombreMetodo = "enviarCorreo";
+		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_CORREO, nombreMetodo, Constantes.LOG_METODO_INICIO);
 
-    boolean emailSent = false;
-    MimeMessage mimeMessage = mailSender.createMimeMessage();
-    MimeMessageHelper mailMessage = new MimeMessageHelper(mimeMessage);
+		boolean emailSent = false;
+		MimeMessage mimeMessage = mailSender.createMimeMessage();
+		MimeMessageHelper mailMessage = new MimeMessageHelper(mimeMessage);
 
-    String emailText = "Tu nuevo Password es: " + contrasenaAutoGenerada;
+		String emailText = "Tu nuevo Password es: " + contrasenaAutoGenerada;
 
-    try {
+		try {
 
-      // Destinatario
-      mailMessage.setTo(correo);
+			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_CORREO, nombreMetodo,
+					Constantes.ENVIO_CORREO_INICIO);
 
-      // Asunto
-      mailMessage.setSubject(Constantes.ASUNTO_CORREO_RECUPERACION);
+			// Destinatario
+			mailMessage.setTo(correo);
 
-      // Texto del correo
-      mailMessage.setText(emailText, true);
+			// Asunto
+			mailMessage.setSubject(Constantes.ASUNTO_CORREO_RECUPERACION);
 
-      mailSender.send(mimeMessage);
+			// Texto del correo
+			mailMessage.setText(emailText, true);
 
-      emailSent = true;
+			mailSender.send(mimeMessage);
 
-    } catch (MessagingException | MailException e) {
-      logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_CORREO, nombreMetodo,
-          e.getMessage());
-    }
+			emailSent = true;
 
-    logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_CORREO, nombreMetodo,
-        Constantes.LOG_METODO_FIN);
+			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_CORREO, nombreMetodo,
+					Constantes.ENVIO_CORREO_FIN);
 
-    return emailSent;
-  }
+		} catch (MessagingException | MailException e) {
+			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_CORREO, nombreMetodo, e.getMessage());
+		}
+
+		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_CORREO, nombreMetodo, Constantes.LOG_METODO_FIN);
+
+		return emailSent;
+	}
 
 }

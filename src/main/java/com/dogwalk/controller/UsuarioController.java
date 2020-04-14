@@ -42,6 +42,11 @@ public class UsuarioController {
 
 		if (usuarioDto.getId() != null && usuarioDto.getId() > 0) {
 			status = HttpStatus.OK;
+			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_USUARIO, nombreMetodo,
+					Constantes.LOG_METODO_ESTATUS_EXITOSO);
+		} else {
+			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_USUARIO, nombreMetodo,
+					Constantes.LOG_METODO_ESTATUS_FALLIDO);
 		}
 
 		ResponseEntity<UsuarioDto> responseEntity = new ResponseEntity<>(usuarioDto, status);
@@ -64,6 +69,11 @@ public class UsuarioController {
 
 		if (loginDto.getId() != null && loginDto.getId() > 0) {
 			status = HttpStatus.OK;
+			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_USUARIO, nombreMetodo,
+					Constantes.LOG_METODO_ESTATUS_EXITOSO);
+		} else {
+			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_USUARIO, nombreMetodo,
+					Constantes.LOG_METODO_ESTATUS_FALLIDO);
 		}
 
 		ResponseEntity<UsuarioDto> responseEntity = new ResponseEntity<>(loginDto, status);
@@ -87,6 +97,11 @@ public class UsuarioController {
 
 		if (mensajeDto.getMensaje().contains(Constantes.CAMBIO_CONTRASENA_EXITOSO)) {
 			status = HttpStatus.OK;
+			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_USUARIO, nombreMetodo,
+					Constantes.LOG_METODO_ESTATUS_EXITOSO);
+		} else {
+			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_USUARIO, nombreMetodo,
+					Constantes.LOG_METODO_ESTATUS_FALLIDO);
 		}
 
 		ResponseEntity<MensajeDto> responseEntity = new ResponseEntity<>(mensajeDto, status);
@@ -108,6 +123,11 @@ public class UsuarioController {
 
 		if (mensajeDto.getMensaje().contains(Constantes.ENVIO_CONTRASENA_EXITOSO)) {
 			status = HttpStatus.OK;
+			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_USUARIO, nombreMetodo,
+					Constantes.LOG_METODO_ESTATUS_EXITOSO);
+		} else {
+			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_USUARIO, nombreMetodo,
+					Constantes.LOG_METODO_ESTATUS_FALLIDO);
 		}
 
 		ResponseEntity<MensajeDto> responseEntity = new ResponseEntity<>(mensajeDto, status);
