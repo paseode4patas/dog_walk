@@ -2,6 +2,8 @@ package com.dogwalk.service;
 
 import java.util.Objects;
 import java.util.stream.Stream;
+
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class UsuarioService {
 	@Autowired
 	CorreoService correoService;
 
+	@Autowired
+	ModelMapper modelMapper;
+
 	public UsuarioDto crearUsuario(UsuarioEntity usuarioEntity) {
 
 		String nombreMetodo = "crearUsuario";
@@ -38,16 +43,13 @@ public class UsuarioService {
 
 		contrasenaEncriptada = utilService.encriptarConBase64(usuarioEntity.getContrasena().trim());
 		usuarioEntity.setContrasena(contrasenaEncriptada);
-		usuarioEntity.setCambiarContrasena(Constantes.DESACTIVADO);
+		usuarioEntity.setCambiarContrasena(Constantes.ESTADO_INACTIVO);
 
 		UsuarioEntity nuevoUsuario = usuarioRepository.save(usuarioEntity);
 
 		if (nuevoUsuario != null && nuevoUsuario.getId() > 0) {
 
-			usuarioDto.setId(nuevoUsuario.getId());
-			usuarioDto.setNombreUsuario(nuevoUsuario.getNombreUsuario());
-			usuarioDto.setTipoUsuario(nuevoUsuario.getTipoUsuario());
-			usuarioDto.setCambiarContrasena(nuevoUsuario.isCambiarContrasena());
+			usuarioDto = modelMapper.map(nuevoUsuario, UsuarioDto.class);
 			mensaje = Constantes.CREACION_USUARIO_EXITOSO;
 
 			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo, mensaje);
@@ -84,12 +86,8 @@ public class UsuarioService {
 
 			if (usuarioEntity != null && usuarioEntity.getId() > 0) {
 
-				loginDto.setId(usuarioEntity.getId());
-				loginDto.setNombreUsuario(usuarioEntity.getNombreUsuario());
-				loginDto.setTipoUsuario(usuarioEntity.getTipoUsuario());
-				loginDto.setCambiarContrasena(usuarioEntity.isCambiarContrasena());
+				loginDto = modelMapper.map(usuarioEntity, UsuarioDto.class);
 				mensaje = Constantes.LOGIN_EXITOSO;
-
 				logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_USUARIO, nombreMetodo, mensaje);
 
 			} else {
@@ -128,7 +126,7 @@ public class UsuarioService {
 
 					contrasenaEncriptada = utilService.encriptarConBase64(contrasenaNueva.trim());
 					usuarioEntity.setContrasena(contrasenaEncriptada);
-					usuarioEntity.setCambiarContrasena(Constantes.DESACTIVADO);
+					usuarioEntity.setCambiarContrasena(Constantes.ESTADO_INACTIVO);
 					usuarioRepository.save(usuarioEntity);
 
 					mensaje = Constantes.CAMBIO_CONTRASENA_EXITOSO;
@@ -171,7 +169,7 @@ public class UsuarioService {
 			contrasenaEncriptada = utilService.encriptarConBase64(contrasenaAutogenerada);
 
 			usuarioEntity.setContrasena(contrasenaEncriptada);
-			usuarioEntity.setCambiarContrasena(Constantes.ACTIVADO);
+			usuarioEntity.setCambiarContrasena(Constantes.ESTADO_ACTIVO);
 
 			envioCorrecto = correoService.enviarCorreo(correo, contrasenaAutogenerada);
 

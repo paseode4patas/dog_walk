@@ -1,11 +1,16 @@
-D:\workspace\DogWalk\src\main\java\com\dogwalk\util\Constantes.java
-D:\workspace\DogWalk\src\main\java\com\dogwalk\dto\MensajeDto.java
-D:\workspace\DogWalk\src\main\java\com\dogwalk\controller\UsuarioController.java
-D:\workspace\DogWalk\src\main\java\com\dogwalk\DogWalkApplication.java
-D:\workspace\DogWalk\src\main\java\com\dogwalk\service\UtilService.java
-D:\workspace\DogWalk\src\main\java\com\dogwalk\controller\UtilController.java
-D:\workspace\DogWalk\src\main\java\com\dogwalk\service\CorreoService.java
-D:\workspace\DogWalk\src\main\java\com\dogwalk\entity\UsuarioEntity.java
-D:\workspace\DogWalk\src\main\java\com\dogwalk\repository\UsuarioRepository.java
-D:\workspace\DogWalk\src\main\java\com\dogwalk\service\UsuarioService.java
-D:\workspace\DogWalk\src\main\java\com\dogwalk\dto\UsuarioDto.java
+D:\Personal\DogWalk Repo\DogWalk\src\main\java\com\dogwalk\controller\UtilController.java
+D:\Personal\DogWalk Repo\DogWalk\src\main\java\com\dogwalk\DogWalkApplication.java
+D:\Personal\DogWalk Repo\DogWalk\src\main\java\com\dogwalk\util\Constantes.java
+D:\Personal\DogWalk Repo\DogWalk\src\main\java\com\dogwalk\controller\UsuarioController.java
+D:\Personal\DogWalk Repo\DogWalk\src\main\java\com\dogwalk\entity\UsuarioEntity.java
+D:\Personal\DogWalk Repo\DogWalk\src\main\java\com\dogwalk\repository\MascotaRepository.java
+D:\Personal\DogWalk Repo\DogWalk\src\main\java\com\dogwalk\dto\UsuarioDto.java
+D:\Personal\DogWalk Repo\DogWalk\src\main\java\com\dogwalk\service\MascotaService.java
+D:\Personal\DogWalk Repo\DogWalk\src\main\java\com\dogwalk\service\UsuarioService.java
+D:\Personal\DogWalk Repo\DogWalk\src\main\java\com\dogwalk\controller\MascotaController.java
+D:\Personal\DogWalk Repo\DogWalk\src\main\java\com\dogwalk\entity\MascotaEntity.java
+D:\Personal\DogWalk Repo\DogWalk\src\main\java\com\dogwalk\dto\MensajeDto.java
+D:\Personal\DogWalk Repo\DogWalk\src\main\java\com\dogwalk\repository\UsuarioRepository.java
+D:\Personal\DogWalk Repo\DogWalk\src\main\java\com\dogwalk\service\UtilService.java
+D:\Personal\DogWalk Repo\DogWalk\src\main\java\com\dogwalk\dto\MascotaDto.java
+D:\Personal\DogWalk Repo\DogWalk\src\main\java\com\dogwalk\service\CorreoService.java

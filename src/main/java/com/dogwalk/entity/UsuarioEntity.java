@@ -33,9 +33,8 @@ public class UsuarioEntity {
 	@Column(name = "tipo_usuario")
 	private String tipoUsuario;
 
-	@NotNull
 	@Column(name = "cambiar_contrasena")
-	private boolean cambiarContrasena;
+	private Boolean cambiarContrasena;
 
 	public Integer getId() {
 		return id;
@@ -69,11 +68,11 @@ public class UsuarioEntity {
 		this.tipoUsuario = tipoUsuario;
 	}
 
-	public boolean isCambiarContrasena() {
+	public Boolean getCambiarContrasena() {
 		return cambiarContrasena;
 	}
 
-	public void setCambiarContrasena(boolean cambiarContrasena) {
+	public void setCambiarContrasena(Boolean cambiarContrasena) {
 		this.cambiarContrasena = cambiarContrasena;
 	}
 

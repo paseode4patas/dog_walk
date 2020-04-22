@@ -3,9 +3,15 @@ com\dogwalk\controller\UsuarioController.class
 com\dogwalk\dto\UsuarioDto.class
 com\dogwalk\entity\UsuarioEntity.class
 com\dogwalk\DogWalkApplication.class
+com\dogwalk\service\MascotaService$1.class
+com\dogwalk\entity\MascotaEntity.class
 com\dogwalk\util\Constantes.class
 com\dogwalk\service\UsuarioService.class
 com\dogwalk\controller\UtilController.class
 com\dogwalk\service\CorreoService.class
+com\dogwalk\controller\MascotaController.class
+com\dogwalk\dto\MascotaDto.class
 com\dogwalk\dto\MensajeDto.class
+com\dogwalk\repository\MascotaRepository.class
 com\dogwalk\repository\UsuarioRepository.class
+com\dogwalk\service\MascotaService.class
