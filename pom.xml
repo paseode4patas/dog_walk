@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>com.dogwalk</groupId>
 	<artifactId>DogWalk</artifactId>
-	<version>21.04.20</version>
+	<version>16.05.20</version>
 	<name>DogWalk</name>
 	<description>Iniciativa Dog Walk</description>
 

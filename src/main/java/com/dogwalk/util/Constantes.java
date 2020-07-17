@@ -9,12 +9,16 @@ public class Constantes {
 	public static final String LOG_CONTROLLER_USUARIO = "UsuarioController";
 	public static final String LOG_CONTROLLER_UTIL = "UtilController";
 	public static final String LOG_CONTROLLER_MASCOTA = "MascotaController";
+	public static final String LOG_CONTROLLER_PASEADOR = "PaseadorController";
+	public static final String LOG_CONTROLLER_HORARIO = "HorarioController";
 
 	// Service
 	public static final String LOG_SERVICE_USUARIO = "UsuarioService";
 	public static final String LOG_SERVICE_UTIL = "UtilService";
 	public static final String LOG_SERVICE_CORREO = "CorreoService";
 	public static final String LOG_SERVICE_MASCOTA = "MascotaService";
+	public static final String LOG_SERVICE_PASEADOR = "PaseadorService";
+	public static final String LOG_SERVICE_HORARIO = "HorarioService";
 
 	// Método
 	public static final String LOG_METODO_INICIO = "Inicio";
@@ -43,6 +47,14 @@ public class Constantes {
 	public static final String DESACTIVACION_MASCOTA_EXITOSO = "Mascota desactivada correctamente";
 	public static final String DESACTIVACION_MASCOTA_FALLIDO = "Error al desactivar la mascota";
 
+	// Paseador
+	public static final String CREACION_PASEADOR_EXITOSO = "Paseador creado correctamente";
+	public static final String CREACION_PASEADOR_FALLIDO = "Error al crear el paseador";
+
+	// Horario
+	public static final String GENERACION_HORARIO_EXITOSO = "Horario generado correctamente";
+	public static final String GENERACION_HORARIO_FALLIDO = "Error al generar el horario";
+
 	// Email
 	public static final String ASUNTO_CORREO_RECUPERACION = "DogWalk - Recupera tu Contraseña";
 	public static final String ENVIO_CORREO_INICIO = "Envío de Correo Iniciado";
@@ -51,5 +63,6 @@ public class Constantes {
 	// General
 	public static final boolean ESTADO_ACTIVO = true;
 	public static final boolean ESTADO_INACTIVO = false;
+	public static final String FORMATO_FECHA = "dd/MM/yyyy";
 
 }
