@@ -29,7 +29,15 @@ public class CorreoService {
 		MimeMessage mimeMessage = mailSender.createMimeMessage();
 		MimeMessageHelper mailMessage = new MimeMessageHelper(mimeMessage);
 
-		String emailText = "Tu nuevo Password es: " + contrasenaAutoGenerada;
+		String emailText = "Hola!" + '\n\n' +
+		"Hemos reseteado tu contraseña de acceso a DogWalk." + 
+		'\n\n' + "Tu nueva contraseña autogenerada es" + contrasenaAutoGenerada 
+		+ '\n\n' +
+		"Una vez que hayas entrado a la app, el sistema te pedirá que cambies la contraseña autogenerada." 
+		+ '\n\n' +
+		"Atentamente," +
+		'\n\n' +
+		 "El equipo de DogWalk.";
 
 		try {
 
