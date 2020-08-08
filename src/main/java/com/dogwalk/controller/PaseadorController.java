@@ -4,16 +4,13 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.dogwalk.dto.MensajeDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.dogwalk.dto.PaseadorDto;
 import com.dogwalk.entity.PaseadorEntity;
@@ -78,6 +75,44 @@ public class PaseadorController {
 		ResponseEntity<List<PaseadorDto>> responseEntity = new ResponseEntity<>(listaPaseadorDto, status);
 
 		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_MASCOTA, nombreMetodo, Constantes.LOG_METODO_FIN);
+
+		return responseEntity;
+	}
+
+	@PutMapping("")
+	public ResponseEntity<MensajeDto> actualizarPaseador(@RequestBody PaseadorEntity paseadorEntity                             ){
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		MensajeDto mensajeDto = paseadorService.actualizarPaseador(paseadorEntity);
+
+		if (mensajeDto.getMensaje().contains(Constantes.ACTUALIZACION_PASEADOR_EXITOSO)){
+			status = HttpStatus.OK;
+			//TODO LOG
+		} else {
+			//LOG
+		}
+
+		ResponseEntity<MensajeDto> responseEntity = new ResponseEntity<>(mensajeDto, status);
+
+		//TODO LOG
+
+		return responseEntity;
+	}
+
+	@PutMapping("/desactivar/{idPaseador}")
+	public  ResponseEntity<MensajeDto> desactivarPaseador(@PathVariable("idPaseador") Integer idPaseador){
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		MensajeDto mensajeDto = paseadorService.desactivarPaseador(idPaseador);
+
+		if (mensajeDto.getMensaje().contains(Constantes.DESACTIVACION_PASEADOR_EXITOSO)){
+			status = HttpStatus.OK;
+			//TODO LOG
+		} else {
+			//LOG
+		}
+
+		ResponseEntity<MensajeDto> responseEntity = new ResponseEntity<>(mensajeDto, status);
+
+		//LOG
 
 		return responseEntity;
 	}

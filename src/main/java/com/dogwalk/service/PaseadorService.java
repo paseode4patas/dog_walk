@@ -3,6 +3,7 @@ package com.dogwalk.service;
 import java.util.Calendar;
 import java.util.List;
 
+import com.dogwalk.dto.MensajeDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
@@ -92,4 +93,46 @@ public class PaseadorService {
 		return listaMascotaDto;
 	}
 
+	public MensajeDto actualizarPaseador(PaseadorEntity paseadorEntity) {
+		//TODO log
+
+		MensajeDto mensajeDto = new MensajeDto();
+		String mensaje = Constantes.ACTUALIZACION_PASEADOR_FALLIDO;
+
+		try {
+			if(paseadorRepository.existsById(paseadorEntity.getId())){
+				paseadorEntity.setEstado(Constantes.ESTADO_ACTIVO);
+				paseadorRepository.save(paseadorEntity);
+				mensaje = Constantes.ACTUALIZACION_PASEADOR_EXITOSO;
+			}
+		} catch (Exception e){
+			//logger.error();//TODO
+		} finally {
+			mensajeDto.setMensaje(mensaje);
+			//TODO
+		}
+		return mensajeDto;
+	}
+
+	public MensajeDto desactivarPaseador(Integer idPaseador) {
+		//TODO log
+		MensajeDto mensajeDto = new MensajeDto();
+		String mensaje = Constantes.DESACTIVACION_PASEADOR_FALLIDO;
+
+		try {
+			PaseadorEntity paseador = paseadorRepository.findById(idPaseador).get();
+			paseador.setEstado(Constantes.ESTADO_INACTIVO);
+			paseadorRepository.save(paseador);
+			mensaje = Constantes.DESACTIVACION_PASEADOR_EXITOSO;
+		} catch (Exception e) {
+			//TODO
+		} finally {
+			mensajeDto.setMensaje(mensaje);
+			//TODO
+		}
+
+		//TODO
+
+		return mensajeDto;
+	}
 }

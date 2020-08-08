@@ -86,7 +86,7 @@ public class MascotaController {
 
 	@PutMapping("")
 	public ResponseEntity<MensajeDto> actualizarMascota(@Valid @RequestBody MascotaEntity mascotaEntity) {
-
+		//TODO log managemente AOP
 		String nombreMetodo = "actualizarMascota";
 		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_MASCOTA, nombreMetodo,
 				Constantes.LOG_METODO_INICIO);

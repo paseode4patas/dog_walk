@@ -16,9 +16,14 @@ import com.dogwalk.util.Constantes;
 public class CorreoService {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private JavaMailSender mailSender;
 
 	@Autowired
-	private JavaMailSender mailSender;
+	private CorreoService(JavaMailSender mailSender){
+		this.mailSender = mailSender;
+	}
+	/*private JavaMailSender mailSender;*/
+
 
 	public boolean enviarCorreo(String correo, String contrasenaAutoGenerada) {
 
@@ -29,15 +34,15 @@ public class CorreoService {
 		MimeMessage mimeMessage = mailSender.createMimeMessage();
 		MimeMessageHelper mailMessage = new MimeMessageHelper(mimeMessage);
 
-		String emailText = "Hola!" + '\n\n' +
+		String emailText = "Hola!"/* + '\n\n' +
 		"Hemos reseteado tu contraseña de acceso a DogWalk." + 
-		'\n\n' + "Tu nueva contraseña autogenerada es" + contrasenaAutoGenerada 
+		'\n\n' + "Tu nueva contraseña autogenerada es"*/ + contrasenaAutoGenerada /*
 		+ '\n\n' +
 		"Una vez que hayas entrado a la app, el sistema te pedirá que cambies la contraseña autogenerada." 
 		+ '\n\n' +
 		"Atentamente," +
 		'\n\n' +
-		 "El equipo de DogWalk.";
+		 "El equipo de DogWalk."*/;
 
 		try {
 

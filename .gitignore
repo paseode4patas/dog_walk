@@ -1,0 +1,6 @@
+/target/
+.classpath
+.project
+DogWalk.iml
+.idea
+.settings

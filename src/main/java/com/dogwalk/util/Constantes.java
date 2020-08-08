@@ -50,6 +50,10 @@ public class Constantes {
 	// Paseador
 	public static final String CREACION_PASEADOR_EXITOSO = "Paseador creado correctamente";
 	public static final String CREACION_PASEADOR_FALLIDO = "Error al crear el paseador";
+	public static final String ACTUALIZACION_PASEADOR_FALLIDO = "Error al actualizar los datos de la mascota";
+	public static final String ACTUALIZACION_PASEADOR_EXITOSO = "Los datos del paseador se actualizaron con éxito";;
+	public static final String DESACTIVACION_PASEADOR_FALLIDO = "Error al desactivar el paseador";
+	public static final String DESACTIVACION_PASEADOR_EXITOSO = "Paseador desactivado correctamente";
 
 	// Horario
 	public static final String GENERACION_HORARIO_EXITOSO = "Horario generado correctamente";
@@ -64,5 +68,4 @@ public class Constantes {
 	public static final boolean ESTADO_ACTIVO = true;
 	public static final boolean ESTADO_INACTIVO = false;
 	public static final String FORMATO_FECHA = "dd/MM/yyyy";
-
 }
