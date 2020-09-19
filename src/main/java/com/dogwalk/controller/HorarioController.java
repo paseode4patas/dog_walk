@@ -147,8 +147,9 @@ public class HorarioController {
 		boolean result = horarioService.borrarDia(idPaseador, fecha, mes, anio);
 		if (!result)
 			return ResponseEntity.badRequest().build();
-
-
-		return null;
+		else {
+			;
+			return new ResponseEntity<>(new MensajeDto("Fecha borrada correctamente"), HttpStatus.OK);
+		}
 	}
 }
