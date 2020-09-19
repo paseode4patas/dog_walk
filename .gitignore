@@ -4,3 +4,6 @@
 DogWalk.iml
 .idea
 .settings
+/.idea/
+/.idea/**
+.idea/

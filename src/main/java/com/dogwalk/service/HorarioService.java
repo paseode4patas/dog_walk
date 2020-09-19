@@ -1,12 +1,13 @@
 package com.dogwalk.service;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-
+import com.dogwalk.dto.HorarioDiarioDto;
+import com.dogwalk.dto.HorarioMesDto;
+import com.dogwalk.entity.HorarioDiarioEntity;
+import com.dogwalk.entity.HorarioMesEntity;
+import com.dogwalk.entity.HorarioState;
+import com.dogwalk.repository.HorarioDiarioRepository;
+import com.dogwalk.repository.HorarioMesRepository;
+import com.dogwalk.util.Constantes;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
@@ -14,13 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.dogwalk.dto.HorarioDiarioDto;
-import com.dogwalk.dto.HorarioMesDto;
-import com.dogwalk.entity.HorarioDiarioEntity;
-import com.dogwalk.entity.HorarioMesEntity;
-import com.dogwalk.repository.HorarioMesRepository;
-import com.dogwalk.repository.HorarioDiarioRepository;
-import com.dogwalk.util.Constantes;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class HorarioService {
@@ -205,4 +201,42 @@ public class HorarioService {
 		return listaHorarioMensualDto;
 	}
 
+	public HorarioMesDto addDay(Integer idPaseador, String fecha, String mes, String anio) {
+		List<HorarioMesEntity> paseadorDias = horarioMesRepository.findByPaseadorIdAndMesAndAnio(idPaseador, mes, anio);
+
+		for (HorarioMesEntity entry : paseadorDias) {
+			if (entry.getFecha().equals(fecha))
+				return null;
+			//LOG: throw new Exception("Usuario ya tiene activa la fecha"); //Will catch as error
+		}
+
+		HorarioMesEntity inputDia = new HorarioMesEntity();
+		inputDia.setPaseadorId(idPaseador);
+		inputDia.setAnio(anio);
+		inputDia.setMes(mes);
+		inputDia.setFecha(fecha);
+		inputDia.setEstado(true);
+
+		HorarioMesEntity nuevoDia = horarioMesRepository.save(inputDia);
+
+		return modelMapper.map(nuevoDia, HorarioMesDto.class);
+	}
+
+	public boolean borrarDia(Integer idPaseador, String fecha, String mes, String anio) {
+		List<HorarioMesEntity> paseadorDias = horarioMesRepository.findByPaseadorIdAndMesAndAnio(idPaseador, mes, anio);
+
+		for (HorarioMesEntity entry : paseadorDias) {
+			if (entry.getFecha().equals(fecha)){
+				List<HorarioDiarioEntity> horarioDia =  horarioDiarioRepository.findHorarioByPaseadorIdAndFecha(idPaseador, fecha);
+
+				for (HorarioDiarioEntity horaEntry : horarioDia){
+					if (horaEntry.getState() == HorarioState.RESERVADO)
+						return false;
+				}
+
+				horarioMesRepository.delete(entry);
+			}
+		}
+		return true;
+	}
 }

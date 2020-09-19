@@ -1,22 +1,18 @@
 package com.dogwalk.controller;
 
-import java.util.List;
-
+import com.dogwalk.dto.HorarioDiarioDto;
+import com.dogwalk.dto.HorarioMesDto;
+import com.dogwalk.dto.MensajeDto;
+import com.dogwalk.service.HorarioService;
+import com.dogwalk.util.Constantes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.dogwalk.dto.HorarioDiarioDto;
-import com.dogwalk.dto.HorarioMesDto;
-import com.dogwalk.service.HorarioService;
-import com.dogwalk.util.Constantes;
+import java.util.List;
 
 @RestController
 @RequestMapping("/horario")
@@ -29,7 +25,7 @@ public class HorarioController {
 
 	@PostMapping("/{mes}/{idPaseador}")
 	public ResponseEntity<Boolean> generarHorario(@PathVariable("mes") Integer mes,
-			@PathVariable("idPaseador") Integer idPaseador) {
+	                                              @PathVariable("idPaseador") Integer idPaseador) {
 
 		String nombreMetodo = "generarHorario";
 		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_HORARIO, nombreMetodo,
@@ -111,7 +107,7 @@ public class HorarioController {
 
 	@GetMapping("/fecha/{mes}/{anio}")
 	public ResponseEntity<List<HorarioMesDto>> listarHorarioMensualPorFecha(@PathVariable("mes") String mes,
-			@PathVariable("anio") String anio) {
+	                                                                        @PathVariable("anio") String anio) {
 
 		String nombreMetodo = "listarHorarioMensualPorFecha";
 		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_HORARIO, nombreMetodo,
@@ -136,4 +132,23 @@ public class HorarioController {
 		return responseEntity;
 	}
 
+	@PutMapping("/add/{idPaseador}/{fecha}/{mes}/{anio}")
+	public ResponseEntity<HorarioMesDto> agregarDia(@PathVariable("idPaseador") Integer idPaseador, @PathVariable("fecha") String fecha, @PathVariable("mes") String mes, @PathVariable("anio") String anio) {
+		HorarioMesDto horarioMesDto = horarioService.addDay(idPaseador, fecha, mes, anio);
+		if (horarioMesDto == null)
+			return ResponseEntity.badRequest().build();
+
+
+		return new ResponseEntity<>(horarioMesDto, HttpStatus.OK);
+	}
+
+	@PutMapping("/remove/{idPaseador}/{fecha}/{mes}/{anio}")
+	public ResponseEntity<MensajeDto> borrarDia(@PathVariable("idPaseador") Integer idPaseador, @PathVariable("fecha") String fecha, @PathVariable("mes") String mes, @PathVariable("anio") String anio) {
+		boolean result = horarioService.borrarDia(idPaseador, fecha, mes, anio);
+		if (!result)
+			return ResponseEntity.badRequest().build();
+
+
+		return null;
+	}
 }

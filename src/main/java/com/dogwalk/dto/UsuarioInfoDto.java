@@ -1,14 +1,19 @@
 package com.dogwalk.dto;
 
-public class PaseadorDto {
+import lombok.Data;
+
+@Data
+public class UsuarioInfoDto {
 
 	private Integer id;
 	private String dni;
 	private String nombres;
 	private String apellidos;
 	private String mensaje;
+	private String email;
+	private Boolean passwordCreado;
 
-	public Integer getId() {
+	/*public Integer getId() {
 		return id;
 	}
 
@@ -47,5 +52,5 @@ public class PaseadorDto {
 	public void setMensaje(String mensaje) {
 		this.mensaje = mensaje;
 	}
-
+*/
 }

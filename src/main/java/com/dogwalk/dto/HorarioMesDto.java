@@ -1,12 +1,15 @@
 package com.dogwalk.dto;
 
+import lombok.Data;
+
+@Data
 public class HorarioMesDto {
 
 	private String fecha;
 	private Integer paseadorId;
 	private Boolean estado;
 
-	public String getFecha() {
+	/*public String getFecha() {
 		return fecha;
 	}
 
@@ -28,6 +31,6 @@ public class HorarioMesDto {
 
 	public void setEstado(Boolean estado) {
 		this.estado = estado;
-	}
+	}*/
 
 }
