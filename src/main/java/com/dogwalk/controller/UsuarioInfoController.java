@@ -1,9 +1,12 @@
 package com.dogwalk.controller;
 
 import com.dogwalk.dto.MensajeDto;
+import com.dogwalk.dto.UsuarioDto;
 import com.dogwalk.dto.UsuarioInfoDto;
+import com.dogwalk.entity.UsuarioEntity;
 import com.dogwalk.entity.UsuarioInfoEntity;
 import com.dogwalk.service.PaseadorService;
+import com.dogwalk.service.UsuarioService;
 import com.dogwalk.util.Constantes;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -28,9 +31,9 @@ public class UsuarioInfoController {
 	@Autowired
 	PaseadorService paseadorService;
 
-	/*@Autowired //Mapper added to solve crear paseador
-	ModelMapper modelMapper;
-*/
+	@Autowired
+	UsuarioService usuarioService;
+
 	@PostMapping("")
 	public ResponseEntity<UsuarioInfoDto> crearPaseador(@Valid @RequestBody JsonNode objectNode) {
 		/* WORK AROUND @RequestBody UsuarioInfoEntity usuarioInfoEntity*/
@@ -45,7 +48,17 @@ public class UsuarioInfoController {
 			e.printStackTrace();
 		}
 		String password = objectNode.get("password").asText();
-		int usuarioId = objectNode.get("usuario_id") != null ? objectNode.get("usuario_id").asInt() : 0;
+		/*int usuarioId = objectNode.get("usuario_id") != null ? objectNode.get("usuario_id").asInt() : 0;*/
+		String userName = objectNode.get("nombre_usuario").asText();
+		UsuarioEntity usuario = new UsuarioEntity();
+
+		usuario.setContrasena(password);
+		usuario.setNombreUsuario(userName);
+		usuario.setTipoUsuario("EMPLEADO");
+
+		UsuarioDto usuarioDto = usuarioService.crearUsuario(usuario);
+
+		int usuarioId = usuarioDto.getId();
 
 		if (password.isEmpty() || usuarioId == 0)
 			return ResponseEntity.badRequest().build();

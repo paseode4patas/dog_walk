@@ -5,6 +5,11 @@ import com.dogwalk.dto.HorarioMesDto;
 import com.dogwalk.dto.MensajeDto;
 import com.dogwalk.service.HorarioService;
 import com.dogwalk.util.Constantes;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,24 +137,47 @@ public class HorarioController {
 		return responseEntity;
 	}
 
-	@PutMapping("/add/{idPaseador}/{fecha}/{mes}/{anio}")
+	@PutMapping("/fecha/add/{idPaseador}/{fecha}/{mes}/{anio}")
 	public ResponseEntity<HorarioMesDto> agregarDia(@PathVariable("idPaseador") Integer idPaseador, @PathVariable("fecha") String fecha, @PathVariable("mes") String mes, @PathVariable("anio") String anio) {
 		HorarioMesDto horarioMesDto = horarioService.addDay(idPaseador, fecha, mes, anio);
 		if (horarioMesDto == null)
 			return ResponseEntity.badRequest().build();
 
-
 		return new ResponseEntity<>(horarioMesDto, HttpStatus.OK);
 	}
 
-	@PutMapping("/remove/{idPaseador}/{fecha}/{mes}/{anio}")
+	@PutMapping("/fecha/remove/{idPaseador}/{fecha}/{mes}/{anio}")
 	public ResponseEntity<MensajeDto> borrarDia(@PathVariable("idPaseador") Integer idPaseador, @PathVariable("fecha") String fecha, @PathVariable("mes") String mes, @PathVariable("anio") String anio) {
 		boolean result = horarioService.borrarDia(idPaseador, fecha, mes, anio);
 		if (!result)
 			return ResponseEntity.badRequest().build();
 		else {
-			;
 			return new ResponseEntity<>(new MensajeDto("Fecha borrada correctamente"), HttpStatus.OK);
 		}
+	}
+
+	@PutMapping("/hora/{idPaseador}/{fecha}")
+	public ResponseEntity<MensajeDto> actualizarDia(@PathVariable Integer idPaseador, @RequestBody JsonNode data, @PathVariable String fecha) {
+		ObjectMapper objectMapper = new ObjectMapper()
+				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+		Boolean result = false;
+		try {
+			List<String> removed = objectMapper.readValue(data.get("removed").asText(), new TypeReference<List<String>>() {
+			});
+			List<String> added = objectMapper.readValue(data.get("added").asText(), new TypeReference<List<String>>() {
+			});
+
+			result = horarioService.setDay(idPaseador, fecha, removed, added);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		} catch (Exception e) { //TODO this send by service update Exception type
+			e.printStackTrace();
+		}
+
+		if (result)
+			return new ResponseEntity<>(new MensajeDto("Fechas actualizadas correctamente"), HttpStatus.OK);
+		else
+			return ResponseEntity.badRequest().build();
 	}
 }

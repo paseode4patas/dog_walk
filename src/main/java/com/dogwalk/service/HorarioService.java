@@ -156,7 +156,7 @@ public class HorarioService {
 			if (fechaPaseo != null && fechaPaseo.length() == 8) {
 
 				String fechaBuscar = fechaPaseo.substring(0, 2) + "/" + fechaPaseo.substring(2, 4) + "/"
-						+ fechaPaseo.substring(4, fechaPaseo.length());
+						+ fechaPaseo.substring(4);
 
 				logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_HORARIO, nombreMetodo,
 						"Fecha Válida: " + fechaBuscar);
@@ -229,7 +229,7 @@ public class HorarioService {
 			if (entry.getFecha().equals(fecha)){
 				List<HorarioDiarioEntity> horarioDia =  horarioDiarioRepository.findHorarioByPaseadorIdAndFecha(idPaseador, fecha);
 
-				for (HorarioDiarioEntity horaEntry : horarioDia){
+				for (HorarioDiarioEntity horaEntry : horarioDia) {
 					if (horaEntry.getState() == HorarioState.RESERVADO)
 						return false;
 				}
@@ -237,6 +237,36 @@ public class HorarioService {
 				horarioMesRepository.delete(entry);
 			}
 		}
+		return true;
+	}
+
+	public boolean setDay(Integer idPaseador, String fecha, List<String> removed, List<String> added) throws Exception {
+		List<HorarioDiarioEntity> horarioDiario = horarioDiarioRepository.findHorarioByPaseadorIdAndFecha(idPaseador, fecha);
+
+		for (HorarioDiarioEntity entity :
+				horarioDiario) {
+			if (removed.contains(entity.getHorario())) {
+				if (entity.getState() == HorarioState.LIBRE) {
+					horarioDiarioRepository.delete(entity);
+				} else {
+					throw new Exception("Este horario ya esta esta reservado: " + entity.getHorario());
+				}
+			}
+		}
+
+		for (HorarioDiarioEntity entity :
+				horarioDiario) {
+			if (added.contains(entity.getHorario())) {
+				throw new Exception("Este horario ya esta reservado");
+			}
+			HorarioDiarioEntity nuevo = new HorarioDiarioEntity();
+			nuevo.setFecha(fecha);
+			nuevo.setEstado(true);
+			nuevo.setHorario(entity.getHorario());
+
+			horarioDiarioRepository.save(nuevo);
+		}
+
 		return true;
 	}
 }
