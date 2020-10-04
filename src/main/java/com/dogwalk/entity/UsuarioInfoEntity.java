@@ -1,17 +1,16 @@
 package com.dogwalk.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import lombok.Data;
+
+import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "PASEADOR")
-public class PaseadorEntity {
+@Table(name = "usuario_info")
+@Data
+public class UsuarioInfoEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +21,11 @@ public class PaseadorEntity {
 	@Size(min = 8, max = 8)
 	@Column(name = "dni")
 	private String dni;
+
+	@NotNull
+	@Email
+	@Column(name = "email")
+	private String email;
 
 	@NotNull
 	@Size(min = 3, max = 100)
@@ -51,6 +55,10 @@ public class PaseadorEntity {
 	@Column(name = "estado")
 	private Boolean estado;
 
+	@OneToOne(mappedBy = "usuarioInfo")
+	private UsuarioEntity usuario;
+
+/*
 	public Integer getId() {
 		return id;
 	}
@@ -114,5 +122,6 @@ public class PaseadorEntity {
 	public void setEstado(Boolean estado) {
 		this.estado = estado;
 	}
+*/
 
 }

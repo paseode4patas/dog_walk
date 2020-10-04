@@ -1,10 +1,17 @@
 package com.dogwalk.controller;
 
-import java.util.List;
-
-import javax.validation.Valid;
-
 import com.dogwalk.dto.MensajeDto;
+import com.dogwalk.dto.UsuarioDto;
+import com.dogwalk.dto.UsuarioInfoDto;
+import com.dogwalk.entity.UsuarioEntity;
+import com.dogwalk.entity.UsuarioInfoEntity;
+import com.dogwalk.service.PaseadorService;
+import com.dogwalk.service.UsuarioService;
+import com.dogwalk.util.Constantes;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,31 +19,58 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.dogwalk.dto.PaseadorDto;
-import com.dogwalk.entity.PaseadorEntity;
-import com.dogwalk.service.PaseadorService;
-import com.dogwalk.util.Constantes;
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/paseador")
-public class PaseadorController {
+public class UsuarioInfoController {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	PaseadorService paseadorService;
 
+	@Autowired
+	UsuarioService usuarioService;
+
 	@PostMapping("")
-	public ResponseEntity<PaseadorDto> crearPaseador(@Valid @RequestBody PaseadorEntity paseadorEntity) {
+	public ResponseEntity<UsuarioInfoDto> crearPaseador(@Valid @RequestBody JsonNode objectNode) {
+		/* WORK AROUND @RequestBody UsuarioInfoEntity usuarioInfoEntity*/
+/*
+		UsuarioInfoEntity usuarioInfoEntity = modelMapper.map(objectNode, UsuarioInfoEntity.class);*/
+		ObjectMapper objectMapper = new ObjectMapper()
+				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		UsuarioInfoEntity usuarioInfoEntity = null;
+		try {
+			usuarioInfoEntity = objectMapper.treeToValue(objectNode, UsuarioInfoEntity.class);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		String password = objectNode.get("password").asText();
+		/*int usuarioId = objectNode.get("usuario_id") != null ? objectNode.get("usuario_id").asInt() : 0;*/
+		String userName = objectNode.get("nombre_usuario").asText();
+		UsuarioEntity usuario = new UsuarioEntity();
+
+		usuario.setContrasena(password);
+		usuario.setNombreUsuario(userName);
+		usuario.setTipoUsuario("EMPLEADO");
+
+		UsuarioDto usuarioDto = usuarioService.crearUsuario(usuario);
+
+		int usuarioId = usuarioDto.getId();
+
+		if (password.isEmpty() || usuarioId == 0)
+			return ResponseEntity.badRequest().build();
 
 		String nombreMetodo = "crearPaseador";
 		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_PASEADOR, nombreMetodo,
 				Constantes.LOG_METODO_INICIO);
-
+		//TODO validation
 		HttpStatus status = HttpStatus.BAD_REQUEST;
-		PaseadorDto paseadorDto = paseadorService.crearPaseador(paseadorEntity);
+		UsuarioInfoDto usuarioInfoDto = paseadorService.crearPaseador(usuarioId, usuarioInfoEntity, password);
 
-		if (paseadorDto.getId() != null && paseadorDto.getId() > 0) {
+		if (usuarioInfoDto.getId() != null && usuarioInfoDto.getId() > 0) {
 			status = HttpStatus.OK;
 			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_PASEADOR, nombreMetodo,
 					Constantes.LOG_METODO_ESTATUS_EXITOSO);
@@ -45,7 +79,7 @@ public class PaseadorController {
 					Constantes.LOG_METODO_ESTATUS_FALLIDO);
 		}
 
-		ResponseEntity<PaseadorDto> responseEntity = new ResponseEntity<>(paseadorDto, status);
+		ResponseEntity<UsuarioInfoDto> responseEntity = new ResponseEntity<>(usuarioInfoDto, status);
 
 		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_PASEADOR, nombreMetodo,
 				Constantes.LOG_METODO_FIN);
@@ -54,16 +88,16 @@ public class PaseadorController {
 	}
 
 	@GetMapping("")
-	public ResponseEntity<List<PaseadorDto>> listarPaseador() {
+	public ResponseEntity<List<UsuarioInfoDto>> listarPaseador() {
 
 		String nombreMetodo = "listarPaseador";
 		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_PASEADOR, nombreMetodo,
 				Constantes.LOG_METODO_INICIO);
 
 		HttpStatus status = HttpStatus.BAD_REQUEST;
-		List<PaseadorDto> listaPaseadorDto = paseadorService.listarPaseador();
+		List<UsuarioInfoDto> listaUsuarioInfoDto = paseadorService.listarPaseador();
 
-		if (listaPaseadorDto != null) {
+		if (listaUsuarioInfoDto != null) {
 			status = HttpStatus.OK;
 			logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_MASCOTA, nombreMetodo,
 					Constantes.LOG_METODO_ESTATUS_EXITOSO);
@@ -72,7 +106,7 @@ public class PaseadorController {
 					Constantes.LOG_METODO_ESTATUS_FALLIDO);
 		}
 
-		ResponseEntity<List<PaseadorDto>> responseEntity = new ResponseEntity<>(listaPaseadorDto, status);
+		ResponseEntity<List<UsuarioInfoDto>> responseEntity = new ResponseEntity<>(listaUsuarioInfoDto, status);
 
 		logger.info(Constantes.LOG_FORMATO, Constantes.LOG_CONTROLLER_MASCOTA, nombreMetodo, Constantes.LOG_METODO_FIN);
 
@@ -80,9 +114,9 @@ public class PaseadorController {
 	}
 
 	@PutMapping("")
-	public ResponseEntity<MensajeDto> actualizarPaseador(@RequestBody PaseadorEntity paseadorEntity                             ){
+	public ResponseEntity<MensajeDto> actualizarPaseador(@RequestBody UsuarioInfoEntity usuarioInfoEntity){
 		HttpStatus status = HttpStatus.BAD_REQUEST;
-		MensajeDto mensajeDto = paseadorService.actualizarPaseador(paseadorEntity);
+		MensajeDto mensajeDto = paseadorService.actualizarPaseador(usuarioInfoEntity);
 
 		if (mensajeDto.getMensaje().contains(Constantes.ACTUALIZACION_PASEADOR_EXITOSO)){
 			status = HttpStatus.OK;

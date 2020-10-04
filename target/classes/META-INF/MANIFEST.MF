@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-Build-Jdk-Spec: 11
-Implementation-Title: DogWalk
-Implementation-Version: 16.05.20
-Created-By: Maven Integration for Eclipse
-

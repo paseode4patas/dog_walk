@@ -1,12 +1,13 @@
 package com.dogwalk.service;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-
+import com.dogwalk.dto.HorarioDiarioDto;
+import com.dogwalk.dto.HorarioMesDto;
+import com.dogwalk.entity.HorarioDiarioEntity;
+import com.dogwalk.entity.HorarioMesEntity;
+import com.dogwalk.entity.HorarioState;
+import com.dogwalk.repository.HorarioDiarioRepository;
+import com.dogwalk.repository.HorarioMesRepository;
+import com.dogwalk.util.Constantes;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
@@ -14,13 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.dogwalk.dto.HorarioDiarioDto;
-import com.dogwalk.dto.HorarioMesDto;
-import com.dogwalk.entity.HorarioDiarioEntity;
-import com.dogwalk.entity.HorarioMesEntity;
-import com.dogwalk.repository.HorarioMesRepository;
-import com.dogwalk.repository.HorarioDiarioRepository;
-import com.dogwalk.util.Constantes;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class HorarioService {
@@ -160,7 +156,7 @@ public class HorarioService {
 			if (fechaPaseo != null && fechaPaseo.length() == 8) {
 
 				String fechaBuscar = fechaPaseo.substring(0, 2) + "/" + fechaPaseo.substring(2, 4) + "/"
-						+ fechaPaseo.substring(4, fechaPaseo.length());
+						+ fechaPaseo.substring(4);
 
 				logger.info(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_HORARIO, nombreMetodo,
 						"Fecha Válida: " + fechaBuscar);
@@ -205,4 +201,72 @@ public class HorarioService {
 		return listaHorarioMensualDto;
 	}
 
+	public HorarioMesDto addDay(Integer idPaseador, String fecha, String mes, String anio) {
+		List<HorarioMesEntity> paseadorDias = horarioMesRepository.findByPaseadorIdAndMesAndAnio(idPaseador, mes, anio);
+
+		for (HorarioMesEntity entry : paseadorDias) {
+			if (entry.getFecha().equals(fecha))
+				return null;
+			//LOG: throw new Exception("Usuario ya tiene activa la fecha"); //Will catch as error
+		}
+
+		HorarioMesEntity inputDia = new HorarioMesEntity();
+		inputDia.setPaseadorId(idPaseador);
+		inputDia.setAnio(anio);
+		inputDia.setMes(mes);
+		inputDia.setFecha(fecha);
+		inputDia.setEstado(true);
+
+		HorarioMesEntity nuevoDia = horarioMesRepository.save(inputDia);
+
+		return modelMapper.map(nuevoDia, HorarioMesDto.class);
+	}
+
+	public boolean borrarDia(Integer idPaseador, String fecha, String mes, String anio) {
+		List<HorarioMesEntity> paseadorDias = horarioMesRepository.findByPaseadorIdAndMesAndAnio(idPaseador, mes, anio);
+
+		for (HorarioMesEntity entry : paseadorDias) {
+			if (entry.getFecha().equals(fecha)){
+				List<HorarioDiarioEntity> horarioDia =  horarioDiarioRepository.findHorarioByPaseadorIdAndFecha(idPaseador, fecha);
+
+				for (HorarioDiarioEntity horaEntry : horarioDia) {
+					if (horaEntry.getState() == HorarioState.RESERVADO)
+						return false;
+				}
+
+				horarioMesRepository.delete(entry);
+			}
+		}
+		return true;
+	}
+
+	public boolean setDay(Integer idPaseador, String fecha, List<String> removed, List<String> added) throws Exception {
+		List<HorarioDiarioEntity> horarioDiario = horarioDiarioRepository.findHorarioByPaseadorIdAndFecha(idPaseador, fecha);
+
+		for (HorarioDiarioEntity entity :
+				horarioDiario) {
+			if (removed.contains(entity.getHorario())) {
+				if (entity.getState() == HorarioState.LIBRE) {
+					horarioDiarioRepository.delete(entity);
+				} else {
+					throw new Exception("Este horario ya esta esta reservado: " + entity.getHorario());
+				}
+			}
+		}
+
+		for (HorarioDiarioEntity entity :
+				horarioDiario) {
+			if (added.contains(entity.getHorario())) {
+				throw new Exception("Este horario ya esta reservado");
+			}
+			HorarioDiarioEntity nuevo = new HorarioDiarioEntity();
+			nuevo.setFecha(fecha);
+			nuevo.setEstado(true);
+			nuevo.setHorario(entity.getHorario());
+
+			horarioDiarioRepository.save(nuevo);
+		}
+
+		return true;
+	}
 }

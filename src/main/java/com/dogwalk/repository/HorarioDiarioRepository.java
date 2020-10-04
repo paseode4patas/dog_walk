@@ -1,10 +1,9 @@
 package com.dogwalk.repository;
 
-import java.util.List;
-
+import com.dogwalk.entity.HorarioDiarioEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.dogwalk.entity.HorarioDiarioEntity;
+import java.util.List;
 
 public interface HorarioDiarioRepository extends JpaRepository<HorarioDiarioEntity, Integer> {
 
@@ -12,5 +11,7 @@ public interface HorarioDiarioRepository extends JpaRepository<HorarioDiarioEnti
 
 	List<HorarioDiarioEntity> findHorarioByPaseadorIdAndFechaAndEstado(Integer idPaseador, String fechaPaseo,
 			Boolean estado);
+
+	List<HorarioDiarioEntity> findHorarioByPaseadorIdAndFecha(Integer idPaseador, String fechaPaseo);
 
 }

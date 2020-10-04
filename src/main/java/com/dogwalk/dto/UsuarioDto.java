@@ -1,5 +1,8 @@
 package com.dogwalk.dto;
 
+import lombok.Data;
+
+@Data
 public class UsuarioDto {
 
 	private Integer id;
@@ -8,7 +11,7 @@ public class UsuarioDto {
 	private boolean cambiarContrasena;
 	private String mensaje;
 
-	public Integer getId() {
+	/*public Integer getId() {
 		return id;
 	}
 
@@ -46,6 +49,6 @@ public class UsuarioDto {
 
 	public void setMensaje(String mensaje) {
 		this.mensaje = mensaje;
-	}
+	}*/
 
 }
