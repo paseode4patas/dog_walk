@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -156,17 +157,27 @@ public class HorarioController {
 		}
 	}
 
-	@PutMapping("/hora/{idPaseador}/{fecha}")
-	public ResponseEntity<MensajeDto> actualizarDia(@PathVariable Integer idPaseador, @RequestBody JsonNode data, @PathVariable String fecha) {
+	@PutMapping("/hora/{idPaseador}")
+	public ResponseEntity<MensajeDto> actualizarDia(@PathVariable Integer idPaseador, @RequestBody JsonNode data, /*@PathVariable String fecha*/@RequestParam String fecha) {
 		ObjectMapper objectMapper = new ObjectMapper()
 				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-		Boolean result = false;
+		boolean result = false;
+		List<String> removed = new ArrayList<>();
+		List<String> added = new ArrayList<>();
+
 		try {
-			List<String> removed = objectMapper.readValue(data.get("removed").asText(), new TypeReference<List<String>>() {
-			});
-			List<String> added = objectMapper.readValue(data.get("added").asText(), new TypeReference<List<String>>() {
-			});
+			for (int i = 0; i <data.get("removed").size(); i++) {
+				removed.add(data.get("removed").get(i).toString());
+			}
+			for (int i = 0; i <data.get("added").size(); i++) {
+				added.add(data.get("added").get(i).toString());
+			}
+
+			/*List<String> removed = objectMapper.readValue(data.get("removed").asText(), new TypeReference<List<String>>() {
+			});*/
+			/*List<String> added = objectMapper.readValue(data.get("added").asText(), new TypeReference<List<String>>() {
+			});*/
 
 			result = horarioService.setDay(idPaseador, fecha, removed, added);
 		} catch (JsonProcessingException e) {

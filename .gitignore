@@ -7,3 +7,4 @@ DogWalk.iml
 /.idea/
 /.idea/**
 .idea/
+/target/**
