@@ -157,10 +157,12 @@ public class HorarioController {
 		}
 	}
 
-	@PutMapping("/hora/{idPaseador}")
-	public ResponseEntity<MensajeDto> actualizarDia(@PathVariable Integer idPaseador, @RequestBody JsonNode data, /*@PathVariable String fecha*/@RequestParam String fecha) {
+	@PutMapping("/hora/{idPaseador}/{fecha}")
+	public ResponseEntity<MensajeDto> actualizarDia(@PathVariable Integer idPaseador, @RequestBody JsonNode data, @PathVariable String fecha/*@RequestParam String fecha*/) {
 		ObjectMapper objectMapper = new ObjectMapper()
 				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+		fecha = fecha.replace("-", "/");
 
 		boolean result = false;
 		List<String> removed = new ArrayList<>();
