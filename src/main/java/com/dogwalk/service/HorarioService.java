@@ -243,6 +243,7 @@ public class HorarioService {
 	public boolean setDay(Integer idPaseador, String fecha, List<String> removed, List<String> added) throws Exception {
 		List<HorarioDiarioEntity> horarioDiario = horarioDiarioRepository.findHorarioByPaseadorIdAndFecha(idPaseador, fecha);
 
+		//Removes time slots
 		for (HorarioDiarioEntity entity :
 				horarioDiario) {
 			if (removed.contains(entity.getHorario())) {
@@ -254,18 +255,31 @@ public class HorarioService {
 			}
 		}
 
-		for (HorarioDiarioEntity entity :
-				horarioDiario) {
-			if (added.contains(entity.getHorario())) {
-				throw new Exception("Este horario ya esta reservado");
+		//Adds time slot
+		if (horarioDiario.size() != 0)
+			for (HorarioDiarioEntity entity :
+					horarioDiario) {
+				if (added.contains(entity.getHorario())) {
+					throw new Exception("Este horario ya esta reservado");
+				}
+				HorarioDiarioEntity nuevo = new HorarioDiarioEntity();
+				nuevo.setFecha(fecha);
+				nuevo.setEstado(true);
+				nuevo.setHorario(entity.getHorario());
+
+				horarioDiarioRepository.save(nuevo);
 			}
+		else{
+			for (String horario: added){
 			HorarioDiarioEntity nuevo = new HorarioDiarioEntity();
 			nuevo.setFecha(fecha);
 			nuevo.setEstado(true);
-			nuevo.setHorario(entity.getHorario());
-
+			nuevo.setHorario(horario);
+			nuevo.setPaseadorId(idPaseador);
 			horarioDiarioRepository.save(nuevo);
+			}
 		}
+
 
 		return true;
 	}
