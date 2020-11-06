@@ -265,6 +265,7 @@ public class HorarioService {
 				HorarioDiarioEntity nuevo = new HorarioDiarioEntity();
 				nuevo.setFecha(fecha);
 				nuevo.setEstado(true);
+				nuevo.setState(HorarioState.RESERVADO);
 				nuevo.setHorario(entity.getHorario());
 
 				horarioDiarioRepository.save(nuevo);
