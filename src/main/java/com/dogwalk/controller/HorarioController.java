@@ -158,22 +158,21 @@ public class HorarioController {
 	}
 
 	@PutMapping("/hora/{idPaseador}/{fecha}")
-	public ResponseEntity<MensajeDto> actualizarDia(@PathVariable Integer idPaseador, @RequestBody JsonNode data, @PathVariable String fecha/*@RequestParam String fecha*/) {
-		ObjectMapper objectMapper = new ObjectMapper()
-				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
+	public ResponseEntity<List<HorarioDiarioDto>> actualizarDia(@PathVariable Integer idPaseador, @RequestBody JsonNode data, @PathVariable String fecha/*@RequestParam String fecha*/) {
+		/*ObjectMapper objectMapper = new ObjectMapper()
+				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);*/
 		fecha = fecha.replace("-", "/");
 
-		boolean result = false;
+		List<HorarioDiarioDto> result = null;
 		List<String> removed = new ArrayList<>();
 		List<String> added = new ArrayList<>();
 
 		try {
 			for (int i = 0; i <data.get("removed").size(); i++) {
-				removed.add(data.get("removed").get(i).toString());
+				removed.add(data.get("removed").get(i).toString().replace("\"", ""));
 			}
 			for (int i = 0; i <data.get("added").size(); i++) {
-				added.add(data.get("added").get(i).toString());
+				added.add(data.get("added").get(i).toString().replace("\"", ""));
 			}
 
 			/*List<String> removed = objectMapper.readValue(data.get("removed").asText(), new TypeReference<List<String>>() {
@@ -182,14 +181,15 @@ public class HorarioController {
 			});*/
 
 			result = horarioService.setDay(idPaseador, fecha, removed, added);
-		} catch (JsonProcessingException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (Exception e) { //TODO this send by service update Exception type
-			e.printStackTrace();
-		}
+			return ResponseEntity.badRequest().build();
+		}//TODO this send by service update Exception type
 
-		if (result)
-			return new ResponseEntity<>(new MensajeDto("Fechas actualizadas correctamente"), HttpStatus.OK);
+
+		if (result != null)
+			return new ResponseEntity<>(result, HttpStatus.OK);
+			//return new ResponseEntity<>(new MensajeDto("Fechas actualizadas correctamente"), HttpStatus.OK);
 		else
 			return ResponseEntity.badRequest().build();
 	}

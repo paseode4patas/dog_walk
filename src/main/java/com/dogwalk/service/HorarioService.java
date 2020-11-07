@@ -166,7 +166,8 @@ public class HorarioService {
 
 				listaHorarioDiarioDto = modelMapper.map(listaHorarioEntity, new TypeToken<List<HorarioDiarioDto>>() {
 				}.getType());
-			}
+			} else
+				throw new Exception("Formato fecha equivacado");
 
 		} catch (Exception e) {
 			logger.error(Constantes.LOG_FORMATO, Constantes.LOG_SERVICE_HORARIO, nombreMetodo, e.getMessage());
@@ -240,7 +241,7 @@ public class HorarioService {
 		return true;
 	}
 
-	public boolean setDay(Integer idPaseador, String fecha, List<String> removed, List<String> added) throws Exception {
+	public List<HorarioDiarioDto> setDay(Integer idPaseador, String fecha, List<String> removed, List<String> added) throws Exception {
 		List<HorarioDiarioEntity> horarioDiario = horarioDiarioRepository.findHorarioByPaseadorIdAndFecha(idPaseador, fecha);
 
 		//Removes time slots
@@ -268,7 +269,11 @@ public class HorarioService {
 				nuevo.setState(HorarioState.RESERVADO);
 				nuevo.setHorario(entity.getHorario());
 
-				horarioDiarioRepository.save(nuevo);
+				try {
+					horarioDiarioRepository.save(nuevo);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		else{
 			for (String horario: added){
@@ -276,12 +281,17 @@ public class HorarioService {
 			nuevo.setFecha(fecha);
 			nuevo.setEstado(true);
 			nuevo.setHorario(horario);
+			nuevo.setState(HorarioState.RESERVADO);
 			nuevo.setPaseadorId(idPaseador);
-			horarioDiarioRepository.save(nuevo);
+				try {
+					horarioDiarioRepository.save(nuevo);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
+		//return true;
 
-
-		return true;
+		return listarHorarioDiarioPorPaseadorYFecha(idPaseador, fecha.replace("/", ""));
 	}
 }
